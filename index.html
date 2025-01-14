@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barcode Check Digit Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Barcode Check Digit Calculator</h1>
+
+    <h2>UPC-A Check Digit</h2>
+    <input type="text" id="upcInput" placeholder="Enter 11 digits of UPC-A" maxlength="11" />
+    <button onclick="calculateUPCACheckDigit()">Calculate UPC-A Check Digit</button>
+
+    <div class="result" id="upcResult"></div>
+
+    <h2>EAN-8 Check Digit</h2>
+    <input type="text" id="ean8Input" placeholder="Enter 7 digits of EAN-8" maxlength="7" />
+    <button onclick="calculateEAN8CheckDigit()">Calculate EAN-8 Check Digit</button>
+
+    <div class="result" id="ean8Result"></div>
+
+    <h2>EAN-13 Check Digit</h2>
+    <input type="text" id="ean13Input" placeholder="Enter 12 digits of EAN-13" maxlength="12" />
+    <button onclick="calculateEAN13CheckDigit()">Calculate EAN-13 Check Digit</button>
+
+    <div class="result" id="ean13Result"></div>
+  </div>
+
+  <script>
+    // UPC-A Check Digit Calculation
+    function calculateUPCACheckDigit() {
+      const data = document.getElementById('upcInput').value;
+
+      if (data.length !== 11 || !/^\d{11}$/.test(data)) {
+        document.getElementById('upcResult').innerHTML = "Please enter exactly 11 numeric digits.";
+        return;
+      }
+
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) {
+        const digit = parseInt(data[i], 10);
+        sum += i % 2 === 0 ? digit : digit * 3;
+      }
+      const checkDigit = (10 - (sum % 10)) % 10;
+      document.getElementById('upcResult').innerHTML = "Check Digit: " + checkDigit;
+    }
+
+    // EAN-8 Check Digit Calculation
+    function calculateEAN8CheckDigit() {
+      const data = document.getElementById('ean8Input').value;
+
+      if (data.length !== 7 || !/^\d{7}$/.test(data)) {
+        document.getElementById('ean8Result').innerHTML = "Please enter exactly 7 numeric digits.";
+        return;
+      }
+
+      let oddSum = 0;
+      let evenSum = 0;
+
+      // Iterate through the 7 digits from left to right
+      for (let i = 0; i < data.length; i++) {
+        const digit = parseInt(data[i], 10);
+        if (i % 2 === 0) {
+          oddSum += digit;
+        } else {
+          evenSum += digit;
+        }
+      }
+
+      // Multiply even sum by 3
+      evenSum *= 3;
+
+      // Total sum
+      const totalSum = oddSum + evenSum;
+
+      // Calculate the remainder when divided by 10
+      const remainder = totalSum % 10;
+
+      // Calculate the check digit (10 - remainder) if not zero, else zero
+      const checkDigit = remainder === 0 ? 0 : 10 - remainder;
+
+      document.getElementById('ean8Result').innerHTML = "Check Digit: " + checkDigit;
+    }
+
+    // EAN-13 Check Digit Calculation
+    function calculateEAN13CheckDigit() {
+      const data = document.getElementById('ean13Input').value;
+
+      if (data.length !== 12 || !/^\d{12}$/.test(data)) {
+        document.getElementById('ean13Result').innerHTML = "Please enter exactly 12 numeric digits.";
+        return;
+      }
+
+      let oddSum = 0;
+      let evenSum = 0;
+
+      // Iterate through the 12 digits from left to right
+      for (let i = 0; i < data.length; i++) {
+        const digit = parseInt(data[i], 10);
+        if (i % 2 === 0) {
+          oddSum += digit;
+        } else {
+          evenSum += digit;
+        }
+      }
+
+      // Multiply even sum by 3
+      evenSum *= 3;
+
+      // Total sum
+      const totalSum = oddSum + evenSum;
+
+      // Calculate the remainder when divided by 10
+      const remainder = totalSum % 10;
+
+      // Calculate the check digit (10 - remainder) if not zero, else zero
+      const checkDigit = remainder === 0 ? 0 : 10 - remainder;
+
+      document.getElementById('ean13Result').innerHTML = "Check Digit: " + checkDigit;
+    }
+  </script>
+
+</body>
+</html>
