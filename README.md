@@ -1,5 +1,5 @@
-##Barcode Check Digit Calculator
-This is a web-based tool for calculating check digits for different types of barcodes: UPC-A, EAN-8, and EAN-13. The tool follows the specific checksum algorithms for each barcode format.
+**Barcode Check Digit Calculator
+**This is a web-based tool for calculating check digits for different types of barcodes: UPC-A, EAN-8, and EAN-13. The tool follows the specific checksum algorithms for each barcode format.
 
 Live Demo
 You can access the live demo of the barcode check digit calculator at the following link: [Barcode Check Digit Calculator
