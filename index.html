@@ -19,6 +19,7 @@
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
+    
     h1 {
       text-align: center;
       font-size: 1.5em;
@@ -49,6 +50,11 @@
       font-size: 1.2em;
       text-align: center;
     }
+    .code128-button {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
   </style>
 </head>
 <body>
@@ -77,10 +83,14 @@
     <!-- Code 128 -->
     <h2>Code 128 Barcode</h2>
     <input type="text" id="code128Input" placeholder="Enter data for Code 128" /><br>
-    <div> <button onclick="generateCode128()">Generate Code 128 Barcode</button><br></div>
-    <div><button onclick="validateCode128()">Validate Code 128 Barcode</button></div>
+    <div>
+      <button class="code128-button" onclick="generateCode128()">Generate Code 128 Barcode</button>
+    </div>
+    <div>
+      <button class="code128-button" onclick="validateCode128()">Validate Code 128 Barcode</button>
+    </div>
     <div class="result" id="code128Result"></div>
-  </div>
+    
 
   <script>
     // UPC-A Check Digit Calculation
