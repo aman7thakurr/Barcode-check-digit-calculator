@@ -56,23 +56,30 @@
   <div class="container">
     <h1>Barcode Check Digit Calculator</h1>
 
+    <!-- UPC-A -->
     <h2>UPC-A Check Digit</h2>
     <input type="text" id="upcInput" placeholder="Enter 11 digits of UPC-A" maxlength="11" />
     <button onclick="calculateUPCACheckDigit()">Calculate UPC-A Check Digit</button>
-
     <div class="result" id="upcResult"></div>
 
+    <!-- EAN-8 -->
     <h2>EAN-8 Check Digit</h2>
     <input type="text" id="ean8Input" placeholder="Enter 7 digits of EAN-8" maxlength="7" />
     <button onclick="calculateEAN8CheckDigit()">Calculate EAN-8 Check Digit</button>
-
     <div class="result" id="ean8Result"></div>
 
+    <!-- EAN-13 -->
     <h2>EAN-13 Check Digit</h2>
     <input type="text" id="ean13Input" placeholder="Enter 12 digits of EAN-13" maxlength="12" />
     <button onclick="calculateEAN13CheckDigit()">Calculate EAN-13 Check Digit</button>
-
     <div class="result" id="ean13Result"></div>
+
+    <!-- Code 128 -->
+    <h2>Code 128 Barcode</h2>
+    <input type="text" id="code128Input" placeholder="Enter data for Code 128" />
+    <button onclick="generateCode128()">Generate Code 128 Barcode</button>
+    <button onclick="validateCode128()">Validate Code 128 Barcode</button>
+    <div class="result" id="code128Result"></div>
   </div>
 
   <script>
@@ -88,24 +95,17 @@
       let oddSum = 0;
       let evenSum = 0;
 
-      // Sum digits in odd positions (1-indexed, so these are 0, 2, 4, 6, 8, 10 in 0-indexed)
       for (let i = 0; i < data.length; i += 2) {
         oddSum += parseInt(data[i], 10);
       }
       oddSum *= 3;
 
-      // Sum digits in even positions (1-indexed, so these are 1, 3, 5, 7, 9 in 0-indexed)
       for (let i = 1; i < data.length - 1; i += 2) {
         evenSum += parseInt(data[i], 10);
       }
 
-      // Add the sums
       const total = oddSum + evenSum;
-
-      // Get the remainder when divided by 10
       const remainder = total % 10;
-
-      // If remainder is not 0, subtract it from 10 to get the check digit
       const checkDigit = remainder === 0 ? 0 : 10 - remainder;
       document.getElementById('upcResult').innerHTML = "Check Digit: " + checkDigit;
     }
@@ -122,22 +122,17 @@
       let oddSum = 0;
       let evenSum = 0;
 
-      // Iterate through the digits from right to left (1-indexed)
       for (let i = 0; i < data.length; i++) {
-        const digit = parseInt(data[6 - i], 10);  // Reverse order for right-to-left
+        const digit = parseInt(data[6 - i], 10);
 
         if (i % 2 === 0) {
-          // Odd positions (1, 3, 5, 7) -> multiply by 3
           oddSum += digit;
         } else {
-          // Even positions (2, 4, 6) -> no multiplication
           evenSum += digit;
         }
       }
 
-      // Calculate the checksum using the formula
       const checksum = (10 - ((3 * oddSum + evenSum) % 10)) % 10;
-
       document.getElementById('ean8Result').innerHTML = "Check Digit: " + checksum;
     }
 
@@ -153,31 +148,69 @@
       let oddSum = 0;
       let evenSum = 0;
 
-      // Iterate through the 12 digits from left to right
       for (let i = 0; i < data.length; i++) {
         const digit = parseInt(data[i], 10);
-
-        // Odd positions (1-indexed): sum them directly (multiply by 3 for even positions)
         if (i % 2 === 0) {
-          oddSum += digit;  // Odd positions: 1st, 3rd, 5th, 7th, 9th, 11th
+          oddSum += digit;
         } else {
-          evenSum += digit;  // Even positions: 2nd, 4th, 6th, 8th, 10th, 12th
+          evenSum += digit;
         }
       }
 
-      // Multiply even sum by 3 (as per the rule)
       evenSum *= 3;
-
-      // Total sum
       const totalSum = oddSum + evenSum;
-
-      // Calculate the remainder when divided by 10
       const remainder = totalSum % 10;
-
-      // Calculate the check digit (10 - remainder) if not zero, else zero
       const checkDigit = remainder === 0 ? 0 : 10 - remainder;
-
       document.getElementById('ean13Result').innerHTML = "Check Digit: " + checkDigit;
+    }
+
+    // Code 128 Check Digit Calculation
+    function calculateCheckDigit(data) {
+      let checkDigit = 0;
+      for (let i = 0; i < data.length; i++) {
+        checkDigit += data.charCodeAt(i) * (i + 1);
+      }
+      return checkDigit;
+    }
+
+    function generateBarcode(data) {
+      let checkDigit = calculateCheckDigit(data);
+      if (checkDigit >= 10) {
+        checkDigit = checkDigit % 10;
+      }
+      return data + checkDigit.toString();
+    }
+
+    function validateBarcode(barcode) {
+      const data = barcode.slice(0, -1);
+      const providedCheckDigit = parseInt(barcode.slice(-1), 10);
+      let calculatedCheckDigit = calculateCheckDigit(data);
+      calculatedCheckDigit = calculatedCheckDigit % 10;
+      return calculatedCheckDigit === providedCheckDigit;
+    }
+
+    function generateCode128() {
+      const data = document.getElementById('code128Input').value;
+
+      if (!data) {
+        document.getElementById('code128Result').innerHTML = "Please enter valid data.";
+        return;
+      }
+
+      const barcode = generateBarcode(data);
+      document.getElementById('code128Result').innerHTML = "Generated Barcode: " + barcode;
+    }
+
+    function validateCode128() {
+      const barcode = document.getElementById('code128Input').value;
+
+      if (!barcode) {
+        document.getElementById('code128Result').innerHTML = "Please enter a barcode to validate.";
+        return;
+      }
+
+      const isValid = validateBarcode(barcode);
+      document.getElementById('code128Result').innerHTML = isValid ? "Valid Barcode" : "Invalid Barcode";
     }
   </script>
 
